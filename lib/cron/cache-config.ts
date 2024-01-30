@@ -1,6 +1,6 @@
 import { Protocol } from '@uniswap/router-sdk'
-import { V2SubgraphProvider, V3SubgraphProvider } from '@uniswap/smart-order-router'
-import { ChainId } from '@uniswap/sdk-core'
+import { V2SubgraphProvider, V3SubgraphProvider } from '@offsetcarbon/smart-order-router'
+import { ChainId } from '@offsetcarbon/sdk-core'
 
 export const chainProtocols = [
   // V3.
@@ -15,6 +15,12 @@ export const chainProtocols = [
     chainId: ChainId.ARBITRUM_ONE,
     timeout: 90000,
     provider: new V3SubgraphProvider(ChainId.ARBITRUM_ONE, 3, 90000),
+  },
+  {
+    protocol: Protocol.V3,
+    chainId: ChainId.ARBITRUM_SEPOLIA,
+    timeout: 90000,
+    provider: new V3SubgraphProvider(ChainId.ARBITRUM_SEPOLIA, 3, 90000),
   },
   {
     protocol: Protocol.V3,

@@ -1,4 +1,5 @@
-import { ChainId, TradeType } from '@uniswap/sdk-core'
+import { ChainId } from '@offsetcarbon/sdk-core'
+import { TradeType } from '@uniswap/sdk-core'
 
 export const PAIRS_TO_TRACK: Map<ChainId, Map<TradeType, string[]>> = new Map([
   [
@@ -20,6 +21,13 @@ export const PAIRS_TO_TRACK: Map<ChainId, Map<TradeType, string[]>> = new Map([
   ],
   [
     ChainId.ARBITRUM_ONE,
+    new Map([
+      [TradeType.EXACT_INPUT, ['WETH/USDC', 'USDC/WETH']],
+      [TradeType.EXACT_OUTPUT, ['*/WETH']],
+    ]),
+  ],
+  [
+    ChainId.ARBITRUM_SEPOLIA,
     new Map([
       [TradeType.EXACT_INPUT, ['WETH/USDC', 'USDC/WETH']],
       [TradeType.EXACT_OUTPUT, ['*/WETH']],

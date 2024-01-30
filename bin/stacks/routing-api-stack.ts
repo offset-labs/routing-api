@@ -1,6 +1,6 @@
-import { SUPPORTED_CHAINS } from '@uniswap/smart-order-router'
+import { SUPPORTED_CHAINS } from '@offsetcarbon/smart-order-router'
 import * as cdk from 'aws-cdk-lib'
-import { ChainId } from '@uniswap/sdk-core'
+import { ChainId } from '@offsetcarbon/sdk-core'
 import { CfnOutput, Duration } from 'aws-cdk-lib'
 import * as aws_apigateway from 'aws-cdk-lib/aws-apigateway'
 import { MethodLoggingLevel } from 'aws-cdk-lib/aws-apigateway'
@@ -117,7 +117,7 @@ export class RoutingAPIStack extends cdk.Stack {
       restApiName: 'Routing API',
       deployOptions: {
         tracingEnabled: true,
-        loggingLevel: MethodLoggingLevel.ERROR,
+        loggingLevel: MethodLoggingLevel.INFO,
         accessLogDestination: new aws_apigateway.LogGroupLogDestination(accessLogGroup),
         accessLogFormat: aws_apigateway.AccessLogFormat.jsonWithStandardFields({
           ip: false,

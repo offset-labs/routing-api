@@ -9,7 +9,7 @@ import {
 } from '../../../../lib/handlers/shared'
 import { getAmount } from '../../../utils/tokens'
 import { CurrencyAmount, Percent } from '@uniswap/sdk-core'
-import { DAI_MAINNET, SwapOptions, SwapType } from '@uniswap/smart-order-router'
+import { DAI_MAINNET, SwapOptions, SwapType } from '@offsetcarbon/smart-order-router'
 
 describe('shared', () => {
   it('parsePortionPercent', () => {

@@ -166,6 +166,8 @@ export abstract class APIGLambdaHandler<CInj, RInj extends BaseRInj, ReqBody, Re
           let statusCode: number
           let body: Res
 
+          log.error("log:", log)
+
           try {
             const handleRequestResult = await this.handleRequest({
               context,
@@ -334,6 +336,8 @@ export abstract class APIGLambdaHandler<CInj, RInj extends BaseRInj, ReqBody, Re
     log: Logger
   ): Promise<{ state: 'valid'; response: Res } | { state: 'invalid'; errorResponse: APIGatewayProxyResult }> {
     const responseSchema = this.responseBodySchema()
+
+    log.error('Response body', body)
 
     if (!responseSchema) {
       return { state: 'valid', response: body as Res }

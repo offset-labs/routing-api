@@ -1,4 +1,5 @@
-import { ChainId, Token } from '@uniswap/sdk-core'
+import { ChainId } from '@offsetcarbon/sdk-core'
+import { Token } from '@uniswap/sdk-core'
 import {
   CachingGasStationProvider,
   CachingTokenListProvider,
@@ -34,7 +35,7 @@ import {
   CachingV2PoolProvider,
   TokenValidatorProvider,
   ITokenPropertiesProvider,
-} from '@uniswap/smart-order-router'
+} from '@offsetcarbon/smart-order-router'
 import { TokenList } from '@uniswap/token-lists'
 import { default as bunyan, default as Logger } from 'bunyan'
 import { ethers } from 'ethers'
@@ -51,14 +52,15 @@ import { DefaultEVMClient } from './evm/EVMClient'
 import { InstrumentedEVMProvider } from './evm/provider/InstrumentedEVMProvider'
 import { deriveProviderName } from './evm/provider/ProviderName'
 import { V2DynamoCache } from './pools/pool-caching/v2/v2-dynamo-cache'
-import { OnChainTokenFeeFetcher } from '@uniswap/smart-order-router/build/main/providers/token-fee-fetcher'
-import { PortionProvider } from '@uniswap/smart-order-router/build/main/providers/portion-provider'
+import { OnChainTokenFeeFetcher } from '@offsetcarbon/smart-order-router/build/main/providers/token-fee-fetcher'
+import { PortionProvider } from '@offsetcarbon/smart-order-router/build/main/providers/portion-provider'
 
 export const SUPPORTED_CHAINS: ChainId[] = [
   ChainId.MAINNET,
   ChainId.OPTIMISM,
   ChainId.ARBITRUM_ONE,
   ChainId.ARBITRUM_GOERLI,
+  ChainId.ARBITRUM_SEPOLIA,
   ChainId.POLYGON,
   ChainId.POLYGON_MUMBAI,
   ChainId.GOERLI,
@@ -69,7 +71,8 @@ export const SUPPORTED_CHAINS: ChainId[] = [
   ChainId.AVALANCHE,
   ChainId.BASE,
 ]
-const DEFAULT_TOKEN_LIST = 'https://gateway.ipfs.io/ipns/tokens.uniswap.org'
+// const DEFAULT_TOKEN_LIST = 'https://gateway.ipfs.io/ipns/tokens.uniswap.org'
+const DEFAULT_TOKEN_LIST = 'https://raw.githubusercontent.com/offset-labs/default-token-list/main/offset-default.tokenlist.json'
 
 export interface RequestInjected<Router> extends BaseRInj {
   chainId: ChainId
@@ -220,6 +223,10 @@ export abstract class InjectorSOR<Router, QueryParams> extends Injector<
               CachingTokenListProvider.fromTokenList(chainId, UNSUPPORTED_TOKEN_LIST as TokenList, blockedTokenCache),
               (async () => {
                 try {
+                  console.log('Getting V3 Subgraph Provider')
+                  console.log('POOL_CACHE_BUCKET_2', POOL_CACHE_BUCKET_2)
+                  console.log('POOL_CACHE_KEY', POOL_CACHE_KEY)
+                  console.log('chainId', chainId)
                   const subgraphProvider = await V3AWSSubgraphProvider.EagerBuild(
                     POOL_CACHE_BUCKET_2!,
                     POOL_CACHE_KEY!,
@@ -291,6 +298,7 @@ export abstract class InjectorSOR<Router, QueryParams> extends Injector<
               )
               break
             case ChainId.ARBITRUM_ONE:
+            case ChainId.ARBITRUM_SEPOLIA:
               quoteProvider = new OnChainQuoteProvider(
                 chainId,
                 provider,

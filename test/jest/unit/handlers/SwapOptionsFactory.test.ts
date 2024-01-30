@@ -1,11 +1,12 @@
 import { Factory } from 'fishery'
 
-import { ChainId, Percent, Token } from '@uniswap/sdk-core'
+import { ChainId } from '@offsetcarbon/sdk-core'
+import { Percent, Token } from '@uniswap/sdk-core'
 import { TradeTypeParam } from '../../../../lib/handlers/quote/schema/quote-schema'
 import { expect, jest } from '@jest/globals'
-import { SwapType } from '@uniswap/smart-order-router'
+import { SwapType } from '@offsetcarbon/smart-order-router'
 import { utils } from 'ethers'
-import { UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
+import { UNIVERSAL_ROUTER_ADDRESS } from '@offsetcarbon/universal-router-sdk'
 
 import {
   SwapOptionsFactory,
@@ -13,7 +14,7 @@ import {
   SwapOptionsUniversalRouterInput,
 } from '../../../../lib/handlers/quote/SwapOptionsFactory'
 
-const MAINNET_UNIVERSAL_ROUTER_ADDRESS = UNIVERSAL_ROUTER_ADDRESS(ChainId.MAINNET)
+const MAINNET_UNIVERSAL_ROUTER_ADDRESS = UNIVERSAL_ROUTER_ADDRESS(ChainId.ARBITRUM_SEPOLIA)
 
 class universalRouterInputFactory extends Factory<SwapOptionsUniversalRouterInput> {
   withFees() {
@@ -44,9 +45,9 @@ class universalRouterInputFactory extends Factory<SwapOptionsUniversalRouterInpu
 }
 
 const UniversalRouterInputFactory = universalRouterInputFactory.define(() => ({
-  chainId: ChainId.MAINNET,
-  currencyIn: new Token(ChainId.MAINNET, '0x0000000000000000000000000000000000000001', 18, 'FOO', 'Foo'),
-  currencyOut: new Token(ChainId.MAINNET, '0x0000000000000000000000000000000000000002', 18, 'BAR', 'Bar'),
+  chainId: ChainId.ARBITRUM_SEPOLIA,
+  currencyIn: new Token(ChainId.ARBITRUM_SEPOLIA, '0x0000000000000000000000000000000000000001', 18, 'FOO', 'Foo'),
+  currencyOut: new Token(ChainId.ARBITRUM_SEPOLIA, '0x0000000000000000000000000000000000000002', 18, 'BAR', 'Bar'),
   tradeType: 'exactIn' as TradeTypeParam,
   slippageTolerance: '0.5',
   amountRaw: '100000000000000000',

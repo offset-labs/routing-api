@@ -1,6 +1,7 @@
 import Joi from '@hapi/joi'
 import { Protocol } from '@uniswap/router-sdk'
-import { ChainId, Currency, CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
+import { ChainId } from '@offsetcarbon/sdk-core'
+import { Currency, CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
 import {
   AlphaRouterConfig,
   IRouter,
@@ -11,7 +12,7 @@ import {
   SimulationStatus,
   IMetric,
   ID_TO_NETWORK_NAME,
-} from '@uniswap/smart-order-router'
+} from '@offsetcarbon/smart-order-router'
 import { Pool } from '@uniswap/v3-sdk'
 import JSBI from 'jsbi'
 import _ from 'lodash'
@@ -45,6 +46,8 @@ export class QuoteHandler extends APIGLambdaHandler<
   ): Promise<Response<QuoteResponse> | ErrorResponse> {
     const { chainId, metric, log, quoteSpeed, intent } = params.requestInjected
 
+    log.info('here 0')
+
     // Mark the start of core business logic for latency bookkeeping.
     // Note that some time may have elapsed before handleRequest was called, so this
     // time does not accurately indicate when our lambda started processing the request,
@@ -54,10 +57,15 @@ export class QuoteHandler extends APIGLambdaHandler<
     // refactored to call handleRequest with the startTime.
     const startTime = Date.now()
 
+    log.info('here 1')
+
     let result: Response<QuoteResponse> | ErrorResponse
 
     try {
       result = await this.handleRequestInternal(params, startTime)
+
+      log.info('here 3')
+      log.info('here 2')
 
       switch (result.statusCode) {
         case 200:
@@ -88,18 +96,24 @@ export class QuoteHandler extends APIGLambdaHandler<
     } catch (err) {
       metric.putMetric(`GET_QUOTE_500_CHAINID: ${chainId}`, 1, MetricLoggerUnit.Count)
 
+      log.info('here 4')
+
       throw err
     } finally {
+      log.info('here 5')
       // This metric is logged after calling the internal handler to correlate with the status metrics
       metric.putMetric(`GET_QUOTE_REQUEST_SOURCE: ${params.requestQueryParams.source}`, 1, MetricLoggerUnit.Count)
       metric.putMetric(`GET_QUOTE_REQUESTED_CHAINID: ${chainId}`, 1, MetricLoggerUnit.Count)
       metric.putMetric(`GET_QUOTE_LATENCY_CHAIN_${chainId}`, Date.now() - startTime, MetricLoggerUnit.Milliseconds)
+
+      log.info('here 6')
 
       metric.putMetric(
         `GET_QUOTE_LATENCY_CHAIN_${chainId}_QUOTE_SPEED_${quoteSpeed ?? 'standard'}`,
         Date.now() - startTime,
         MetricLoggerUnit.Milliseconds
       )
+
       metric.putMetric(
         `GET_QUOTE_LATENCY_CHAIN_${chainId}_INTENT_${intent ?? 'quote'}`,
         Date.now() - startTime,
@@ -157,7 +171,10 @@ export class QuoteHandler extends APIGLambdaHandler<
         metric,
       },
     } = params
+    log.info('here 8..9')
+
     if (tokenInChainId !== tokenOutChainId) {
+      log.info('here 10')
       return {
         statusCode: 400,
         errorCode: 'TOKEN_CHAINS_DIFFERENT',
@@ -165,20 +182,29 @@ export class QuoteHandler extends APIGLambdaHandler<
       }
     }
 
+    log.info('here 11')
+    log.info('here 11')
+
     let protocols: Protocol[] = []
     if (protocolsStr) {
+      log.info('here 12')
       for (const protocolStr of protocolsStr) {
+        log.info('here 13')
         switch (protocolStr.toLowerCase()) {
           case 'v2':
+            log.info('here 13')
             protocols.push(Protocol.V2)
             break
           case 'v3':
+            log.info('here 14')
             protocols.push(Protocol.V3)
             break
           case 'mixed':
+            log.info('here 15')
             protocols.push(Protocol.MIXED)
             break
           default:
+            log.info('here 16')
             return {
               statusCode: 400,
               errorCode: 'INVALID_PROTOCOL',
@@ -187,20 +213,25 @@ export class QuoteHandler extends APIGLambdaHandler<
         }
       }
     } else if (!forceCrossProtocol) {
-      protocols = [Protocol.V3]
+      log.info('here 17')
+      // throw new Error("hereee")
     }
+    log.info('here 18')
 
     // Parse user provided token address/symbol to Currency object.
     const currencyLookupStartTime = Date.now()
+    log.info('here 19')
     const currencyLookup = new CurrencyLookup(tokenListProvider, tokenProvider, log)
+    log.info('here 20')
     const [currencyIn, currencyOut] = await Promise.all([
       currencyLookup.searchForToken(tokenInAddress, tokenInChainId),
       currencyLookup.searchForToken(tokenOutAddress, tokenOutChainId),
     ])
-
+    log.info('here 21')
     metric.putMetric('TokenInOutStrToToken', Date.now() - currencyLookupStartTime, MetricLoggerUnit.Milliseconds)
 
     if (!currencyIn) {
+      log.info('here 22')
       return {
         statusCode: 400,
         errorCode: 'TOKEN_IN_INVALID',
@@ -209,6 +240,7 @@ export class QuoteHandler extends APIGLambdaHandler<
     }
 
     if (!currencyOut) {
+      log.info('here 22')
       return {
         statusCode: 400,
         errorCode: 'TOKEN_OUT_INVALID',
@@ -217,6 +249,7 @@ export class QuoteHandler extends APIGLambdaHandler<
     }
 
     if (currencyIn.equals(currencyOut)) {
+      log.info('here 23')
       return {
         statusCode: 400,
         errorCode: 'TOKEN_IN_OUT_SAME',
@@ -225,10 +258,13 @@ export class QuoteHandler extends APIGLambdaHandler<
     }
 
     let parsedDebugRoutingConfig = {}
+    log.info('here 24')
     if (debugRoutingConfig && unicornSecret && unicornSecret === process.env.UNICORN_SECRET) {
       parsedDebugRoutingConfig = JSON.parse(debugRoutingConfig)
     }
 
+
+    log.info('here 25')
     const routingConfig: AlphaRouterConfig = {
       ...DEFAULT_ROUTING_CONFIG_BY_CHAIN(chainId),
       ...(minSplits ? { minSplits } : {}),
@@ -244,10 +280,13 @@ export class QuoteHandler extends APIGLambdaHandler<
       ...(enableFeeOnTransferFeeFetching ? FEE_ON_TRANSFER_SPECIFIC_CONFIG(enableFeeOnTransferFeeFetching) : {}),
     }
 
+    log.info('here 26')
     metric.putMetric(`${intent}Intent`, 1, MetricLoggerUnit.Count)
 
     let swapRoute: SwapRoute | null
     let amount: CurrencyAmount<Currency>
+
+    log.info('here 27')
 
     let tokenPairSymbol = ''
     let tokenPairSymbolChain = ''
@@ -256,11 +295,15 @@ export class QuoteHandler extends APIGLambdaHandler<
       tokenPairSymbolChain = `${tokenPairSymbol}/${chainId}`
     }
 
+    log.info('here 28')
+
     const [token0Symbol, token0Address, token1Symbol, token1Address] = currencyIn.wrapped.sortsBefore(
       currencyOut.wrapped
     )
       ? [currencyIn.symbol, currencyIn.wrapped.address, currencyOut.symbol, currencyOut.wrapped.address]
       : [currencyOut.symbol, currencyOut.wrapped.address, currencyIn.symbol, currencyIn.wrapped.address]
+
+    log.info('here 29')
 
     const swapParams: SwapOptions | undefined = SwapOptionsFactory.assemble({
       chainId,
@@ -283,9 +326,13 @@ export class QuoteHandler extends APIGLambdaHandler<
       simulateFromAddress,
     })
 
+    log.info('here 30')
+
     if (swapParams?.simulate?.fromAddress) {
       metric.putMetric('Simulation Requested', 1, MetricLoggerUnit.Count)
     }
+
+    log.info('here 31')
 
     switch (type) {
       case 'exactIn':

@@ -1,5 +1,6 @@
-import DEFAULT_TOKEN_LIST from '@uniswap/default-token-list'
-import { ChainId, Token } from '@uniswap/sdk-core'
+import DEFAULT_TOKEN_LIST from '@offsetcarbon/default-token-list'
+import { ChainId } from '@offsetcarbon/sdk-core'
+import { Token } from '@uniswap/sdk-core'
 import {
   CachingTokenListProvider,
   DAI_ARBITRUM,
@@ -32,7 +33,8 @@ import {
   WRAPPED_NATIVE_CURRENCY,
   USDC_BASE,
   USDC_BASE_GOERLI,
-} from '@uniswap/smart-order-router'
+  USDC_ARBITRUM_SEPOLIA
+} from '@offsetcarbon/smart-order-router'
 import { ethers } from 'ethers'
 import NodeCache from 'node-cache'
 
@@ -132,6 +134,8 @@ export const USDC_ON = (chainId: ChainId): Token => {
       return USDC_BASE
     case ChainId.BASE_GOERLI:
       return USDC_BASE_GOERLI
+    case ChainId.ARBITRUM_SEPOLIA:
+      return USDC_ARBITRUM_SEPOLIA
     default:
       throw new Error(`Chain id: ${chainId} not supported`)
   }

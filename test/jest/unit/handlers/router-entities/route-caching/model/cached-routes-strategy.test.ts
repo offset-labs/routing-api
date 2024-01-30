@@ -1,5 +1,6 @@
-import { CacheMode } from '@uniswap/smart-order-router'
-import { ChainId, CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
+import { CacheMode } from '@offsetcarbon/smart-order-router'
+import { ChainId } from '@offsetcarbon/sdk-core'
+import { CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
 import {
   CachedRoutesBucket,
   CachedRoutesStrategy,

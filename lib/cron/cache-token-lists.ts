@@ -4,9 +4,10 @@ import axios from 'axios'
 import { default as bunyan, default as Logger } from 'bunyan'
 
 const TOKEN_LISTS = [
-  'https://raw.githubusercontent.com/The-Blockchain-Association/sec-notice-list/master/ba-sec-list.json',
-  'https://tokens.coingecko.com/uniswap/all.json',
-  'https://gateway.ipfs.io/ipns/tokens.uniswap.org',
+  'https://raw.githubusercontent.com/offset-labs/default-token-list/main/offset-default.tokenlist.json',
+  // 'https://raw.githubusercontent.com/The-Blockchain-Association/sec-notice-list/master/ba-sec-list.json',
+  // 'https://tokens.coingecko.com/uniswap/all.json',
+  // 'https://gateway.ipfs.io/ipns/tokens.uniswap.org',
 ]
 
 const handler: ScheduledHandler = async (event: EventBridgeEvent<string, void>) => {
