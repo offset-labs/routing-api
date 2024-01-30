@@ -1,6 +1,6 @@
 import { describe, expect, jest } from '@jest/globals'
-import { ExtendedEther } from '@uniswap/smart-order-router'
-import { ChainId, Token } from '@uniswap/sdk-core'
+import { ExtendedEther } from '@offsetcarbon/smart-order-router'
+import { ChainId, Token } from '@offsetcarbon/sdk-core'
 import { CurrencyLookup } from '../../../../lib/handlers/CurrencyLookup'
 
 const address = '0x0000000000000000000000000000000000000001'

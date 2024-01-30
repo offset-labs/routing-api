@@ -1,4 +1,4 @@
-import { ChainId, Token } from '@uniswap/sdk-core'
+import { ChainId, Token } from '@offsetcarbon/sdk-core'
 import {
   CachingGasStationProvider,
   CachingTokenListProvider,
@@ -34,7 +34,7 @@ import {
   CachingV2PoolProvider,
   TokenValidatorProvider,
   ITokenPropertiesProvider,
-} from '@uniswap/smart-order-router'
+} from '@offsetcarbon/smart-order-router'
 import { TokenList } from '@uniswap/token-lists'
 import { default as bunyan, default as Logger } from 'bunyan'
 import { ethers } from 'ethers'
@@ -51,23 +51,12 @@ import { DefaultEVMClient } from './evm/EVMClient'
 import { InstrumentedEVMProvider } from './evm/provider/InstrumentedEVMProvider'
 import { deriveProviderName } from './evm/provider/ProviderName'
 import { V2DynamoCache } from './pools/pool-caching/v2/v2-dynamo-cache'
-import { OnChainTokenFeeFetcher } from '@uniswap/smart-order-router/build/main/providers/token-fee-fetcher'
-import { PortionProvider } from '@uniswap/smart-order-router/build/main/providers/portion-provider'
+import { OnChainTokenFeeFetcher } from '@offsetcarbon/smart-order-router/build/main/providers/token-fee-fetcher'
+import { PortionProvider } from '@offsetcarbon/smart-order-router/build/main/providers/portion-provider'
 
 export const SUPPORTED_CHAINS: ChainId[] = [
   ChainId.MAINNET,
   ChainId.OPTIMISM,
-  ChainId.ARBITRUM_ONE,
-  ChainId.ARBITRUM_GOERLI,
-  ChainId.POLYGON,
-  ChainId.POLYGON_MUMBAI,
-  ChainId.GOERLI,
-  ChainId.SEPOLIA,
-  ChainId.CELO,
-  ChainId.CELO_ALFAJORES,
-  ChainId.BNB,
-  ChainId.AVALANCHE,
-  ChainId.BASE,
 ]
 const DEFAULT_TOKEN_LIST = 'https://gateway.ipfs.io/ipns/tokens.uniswap.org'
 
@@ -256,40 +245,6 @@ export abstract class InjectorSOR<Router, QueryParams> extends Injector<
           // 200*725k < 150m
           let quoteProvider: OnChainQuoteProvider | undefined = undefined
           switch (chainId) {
-            case ChainId.BASE:
-            case ChainId.OPTIMISM:
-              quoteProvider = new OnChainQuoteProvider(
-                chainId,
-                provider,
-                multicall2Provider,
-                {
-                  retries: 2,
-                  minTimeout: 100,
-                  maxTimeout: 1000,
-                },
-                {
-                  multicallChunk: 110,
-                  gasLimitPerCall: 1_200_000,
-                  quoteMinSuccessRate: 0.1,
-                },
-                {
-                  gasLimitOverride: 3_000_000,
-                  multicallChunk: 45,
-                },
-                {
-                  gasLimitOverride: 3_000_000,
-                  multicallChunk: 45,
-                },
-                {
-                  baseBlockOffset: -25,
-                  rollback: {
-                    enabled: true,
-                    attemptsBeforeRollback: 1,
-                    rollbackBlockOffset: -20,
-                  },
-                }
-              )
-              break
             case ChainId.ARBITRUM_ONE:
               quoteProvider = new OnChainQuoteProvider(
                 chainId,

@@ -1,5 +1,5 @@
 import pinataSDK from '@pinata/sdk'
-import { ID_TO_NETWORK_NAME } from '@uniswap/smart-order-router'
+import { ID_TO_NETWORK_NAME } from '@offsetcarbon/smart-order-router'
 import { EventBridgeEvent, ScheduledHandler } from 'aws-lambda'
 import { Route53, STS } from 'aws-sdk'
 import { default as bunyan, default as Logger } from 'bunyan'
@@ -89,7 +89,7 @@ const handler: ScheduledHandler = async (event: EventBridgeEvent<string, void>) 
   }
 
   // link resulting hash to DNS
-  const domain = process.env.STAGE == 'prod' ? 'api.uniswap.org' : 'beta.api.uniswap.org'
+  const domain = process.env.STAGE == 'prod' ? 'api.offsetcarbon.xyz' : 'beta.api.offsetcarbon.xyz'
   var params = {
     ChangeBatch: {
       Changes: [
